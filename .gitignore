@@ -1,0 +1,18 @@
+# Entorno Virtual
+venv/
+env/
+
+# Archivos compilados de Python
+*.pyc
+__pycache__/
+
+# Base de datos local SQLite
+*.sqlite3
+
+# Configuración local de VS Code y SO
+.vscode/
+.DS_Store
+
+# Carpeta media para archivos subidos por el usuario
+media/
+

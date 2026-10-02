@@ -1,0 +1,47 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.conf import settings
+
+class Profile(models.Model):
+    """
+    Extiende la información del usuario sin modificar el modelo User de Django.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(max_length=500, blank=True, verbose_name="Biografía")
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', verbose_name="Foto de perfil")
+    interests = models.CharField(max_length=200, blank=True, verbose_name="Intereses/Aficiones")
+
+    def __str__(self):
+        return f'Perfil de {self.user.username}'
+
+class Post(models.Model):
+    """
+    Publicaciones del usuario con soporte para texto e imagen.
+    """
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    text = models.TextField(verbose_name="Contenido")
+    image = models.ImageField(upload_to='posts/', blank=True, null=True, verbose_name="Imagen del post")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Post de {self.author.username} ({self.created_at.date()})'
+
+class Follow(models.Model):
+    """
+    Relación 'Seguir' y 'Dejar de seguir'. 
+    """
+    user_from = models.ForeignKey(User, related_name='rel_from_set', on_delete=models.CASCADE)
+    user_to = models.ForeignKey(User, related_name='rel_to_set', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ('user_from', 'user_to') # Evita seguir dos veces a la misma persona
+
+    def __str__(self):
+        return f'{self.user_from} sigue a {self.user_to}'
+
+# Create your models here.
