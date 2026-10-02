@@ -1,0 +1,26 @@
+<!-- social/templates/social/profile_detail.html -->
+{% extends 'social/base.html' %}
+
+{% block title %}Perfil de {{ user_profile.username }} | Red Social{% endblock %}
+
+{% block content %}
+<div class="card" style="display: flex; gap: 1.5rem; align-items: center;">
+    <div>
+        {% if user_profile.profile.avatar %}
+            <img src="{{ user_profile.profile.avatar.url }}" alt="Avatar" class="avatar">
+        {% else %}
+            <div class="avatar" style="background: #ccc; display: flex; align-items: center; justify-content: center; font-size: 2rem;">👤</div>
+        {% endif %}
+    </div>
+    <div>
+        <h2 style="margin: 0;">{{ user_profile.username }}</h2>
+        <p style="color: #65676b; margin: 0.3rem 0;">{{ user_profile.email }}</p>
+        <p><strong>Biografía:</strong> {{ user_profile.profile.bio|default:"Sin biografía" }}</p>
+        <p><strong>Aficiones e Intereses:</strong> {{ user_profile.profile.interests|default:"No especificado" }}</p>
+        
+        {% if user == user_profile %}
+            <a href="{% url 'profile_edit' %}" class="btn" style="font-size: 0.85rem;">Editar mi Perfil</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

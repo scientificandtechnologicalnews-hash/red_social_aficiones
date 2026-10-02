@@ -1,0 +1,50 @@
+<!-- social/templates/social/feed.html -->
+{% extends 'social/base.html' %}
+
+{% block title %}Inicio | Red Social{% endblock %}
+
+{% block content %}
+<!-- Formulario para publicar -->
+<div class="card">
+    <h3>¿Qué quieres compartir hoy, {{ user.username }}?</h3>
+    <!-- Importante: enctype="multipart/form-data" para permitir subida de imágenes -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Publicar</button>
+    </form>
+</div>
+
+<!-- Lista de publicaciones del Feed -->
+<h3>Publicaciones Recientes</h3>
+{% for post in posts %}
+    <div class="card">
+        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+            {% if post.author.profile.avatar %}
+                <img src="{{ post.author.profile.avatar.url }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            {% endif %}
+            <div>
+                <strong>
+                    <a href="{% url 'profile_detail' post.author.username %}" style="color: #1877f2; text-decoration: none;">
+                        {{ post.author.username }}
+                    </a>
+                </strong>
+                <br>
+                <small style="color: #65676b;">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+        </div>
+
+        <p style="font-size: 1rem; color: #1c1e21;">{{ post.text }}</p>
+
+        {% if post.image %}
+            <div style="margin-top: 0.8rem;">
+                <img src="{{ post.image.url }}" alt="Imagen de la publicación" style="max-width: 100%; border-radius: 8px;">
+            </div>
+        {% endif %}
+    </div>
+{% empty %}
+    <div class="card">
+        <p>No hay publicaciones todavía. ¡Sé el primero en compartir algo!</p>
+    </div>
+{% endfor %}
+{% endblock %}

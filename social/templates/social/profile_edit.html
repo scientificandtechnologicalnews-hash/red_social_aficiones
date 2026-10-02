@@ -1,0 +1,21 @@
+<!-- social/templates/social/profile_edit.html -->
+{% extends 'social/base.html' %}
+
+{% block title %}Editar Perfil | Red Social{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 0 auto;">
+    <h2>Editar Perfil</h2>
+    <!-- enctype="multipart/form-data" es IMPRESCINDIBLE para subir imágenes -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>Datos de Usuario</h3>
+        {{ u_form.as_p }}
+        
+        <h3>Perfil Público</h3>
+        {{ p_form.as_p }}
+        
+        <button type="submit" class="btn">Guardar Cambios</button>
+    </form>
+</div>
+{% endblock %}

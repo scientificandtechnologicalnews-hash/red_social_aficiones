@@ -1,0 +1,55 @@
+<!-- social/templates/social/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Red Social de Aficiones{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+        header { background-color: #1877f2; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        header a { color: white; text-decoration: none; font-weight: bold; margin-left: 1rem; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .btn { background-color: #1877f2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+        .alert { padding: 0.8rem; margin-bottom: 1rem; border-radius: 4px; background-color: #e7f3fe; color: #1877f2; border: 1px solid #b3d7ff; }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>
+            <!-- Verificación condicional para evitar NoReverseMatch con usuarios anónimos -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile_detail' user.username %}" style="margin:0;">🌐 Red Aficiones</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="margin:0;">🌐 Red Aficiones</a>
+            {% endif %}
+        </h2>
+        <nav>
+            {% if user.is_authenticated %}
+                <span>Hola, <strong>{{ user.username }}</strong></span>
+                <a href="{% url 'profile_detail' user.username %}">Mi Perfil</a>
+                <a href="{% url 'profile_edit' %}">Editar Perfil</a>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: white; font-weight: bold; cursor: pointer; text-decoration: underline;">Salir</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+                <a href="{% url 'register' %}">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

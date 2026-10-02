@@ -1,0 +1,15 @@
+<!-- social/templates/social/register.html -->
+{% extends 'social/base.html' %}
+
+{% block title %}Registro | Red Social{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 450px; margin: 0 auto;">
+    <h2>Crear Cuenta</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn" style="width: 100%;">Registrarme</button>
+    </form>
+</div>
+{% endblock %}
