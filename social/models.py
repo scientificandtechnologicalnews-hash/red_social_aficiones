@@ -44,4 +44,35 @@ class Follow(models.Model):
     def __str__(self):
         return f'{self.user_from} sigue a {self.user_to}'
 
+
+class Comment(models.Model):
+    """
+    Modelo para almacenar los comentarios realizados por los usuarios en las publicaciones.
+    """
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', verbose_name="Publicación")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments', verbose_name="Autor")
+    text = models.TextField(max_length=300, verbose_name="Comentario")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+
+    class Meta:
+        ordering = ['created_at'] # Los comentarios se muestran del más antiguo al más reciente
+
+    def __str__(self):
+        return f'Comentario de {self.author.username} en post #{self.post.id}'
+
+
+class Like(models.Model):
+    """
+    Modelo para gestionar los 'Me gusta' de los usuarios en cada publicación.
+    """
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes', verbose_name="Publicación")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='likes', verbose_name="Usuario")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Garantiza que un usuario solo pueda dar 'Me gusta' una vez por publicación
+        unique_together = ('post', 'user')
+
+    def __str__(self):
+        return f'{self.user.username} le gusta la publicación #{self.post.id}'
 # Create your models here.

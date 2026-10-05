@@ -7,7 +7,6 @@
 <!-- Formulario para publicar -->
 <div class="card">
     <h3>¿Qué quieres compartir hoy, {{ user.username }}?</h3>
-    <!-- Importante: enctype="multipart/form-data" para permitir subida de imágenes -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
@@ -19,6 +18,7 @@
 <h3>Publicaciones Recientes</h3>
 {% for post in posts %}
     <div class="card">
+        <!-- Encabezado del Post -->
         <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
             {% if post.author.profile.avatar %}
                 <img src="{{ post.author.profile.avatar.url }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
@@ -34,6 +34,7 @@
             </div>
         </div>
 
+        <!-- Contenido del Post -->
         <p style="font-size: 1rem; color: #1c1e21;">{{ post.text }}</p>
 
         {% if post.image %}
@@ -41,10 +42,37 @@
                 <img src="{{ post.image.url }}" alt="Imagen de la publicación" style="max-width: 100%; border-radius: 8px;">
             </div>
         {% endif %}
+
+        <!-- Barra de Reacciones / Likes -->
+        <div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #eee; display: flex; align-items: center; gap: 1rem;">
+            <a href="{% url 'like_toggle' post.id %}" class="btn" style="background-color: #e4e6eb; color: #050505; font-size: 0.85rem;">
+                ❤️ {{ post.likes.count }} Me gusta
+            </a>
+            <span style="font-size: 0.85rem; color: #65676b;">💬 {{ post.comments.count }} Comentarios</span>
+        </div>
+
+        <!-- Lista de Comentarios -->
+        <div style="margin-top: 1rem; background-color: #f7f8fa; padding: 0.8rem; border-radius: 6px;">
+            {% for comment in post.comments.all %}
+                <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <strong>{{ comment.author.username }}:</strong> {{ comment.text }}
+                    <br><small style="color: #8a8d91; font-size: 0.75rem;">{{ comment.created_at|date:"d/m H:i" }}</small>
+                </div>
+            {% empty %}
+                <small style="color: #8a8d91;">Aún no hay comentarios.</small>
+            {% endfor %}
+
+            <!-- Formulario para agregar comentario -->
+            <form action="{% url 'add_comment' post.id %}" method="post" style="margin-top: 0.8rem;">
+                {% csrf_token %}
+                {{ comment_form.text }}
+                <button type="submit" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Comentar</button>
+            </form>
+        </div>
     </div>
 {% empty %}
     <div class="card">
-        <p>No hay publicaciones todavía. ¡Sé el primero en compartir algo!</p>
+        <p>No hay publicaciones todavía o no sigues a nadie. ¡Sigue a otros usuarios o publica algo!</p>
     </div>
 {% endfor %}
 {% endblock %}
